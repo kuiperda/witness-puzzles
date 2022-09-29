@@ -1,0 +1,60 @@
+:root {
+    --primary-color: steelblue;
+    --secondary-color: #353a40;
+}
+
+.app {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.header {
+    position: relative;
+    background-color: var(--primary-color);
+    width: 100vw;
+    height: 10vh;
+    text-align: center;
+    display: grid;
+}
+
+.player {
+    width: 100vw;
+    height: 90vh;
+    background-color: var(--secondary-color);
+}
+
+.buttons {
+    position: relative;
+    margin: auto;
+}
+
+.generate {
+    color: var(--secondary-color);
+    background-color: greenyellow;
+    border: greenyellow;
+    position: relative;
+    left: -5%;
+}
+
+.customize {
+    color: var(--secondary-color);
+    background-color: white;
+    border: white;
+    position: relative;
+    left: 5%;
+
+}
+
+.player {
+    position: relative;
+    display: grid;
+    text-align: center;
+}
+
+.puzzle {
+    margin: auto;
+    color: turquoise;
+}
