@@ -1,6 +1,7 @@
 :root {
     --primary-color: steelblue;
     --secondary-color: #353a40;
+    --tertiary-color: beige;
 }
 
 .app {
@@ -18,12 +19,6 @@
     height: 10vh;
     text-align: center;
     display: grid;
-}
-
-.player {
-    width: 100vw;
-    height: 90vh;
-    background-color: var(--secondary-color);
 }
 
 .buttons {
@@ -48,13 +43,71 @@
 
 }
 
-.player {
+.body {
+    width: 100vw;
+    height: 90vh;
+    background-color: var(--secondary-color);
     position: relative;
     display: grid;
-    text-align: center;
 }
 
 .puzzle {
     margin: auto;
-    color: turquoise;
+    position: relative;
+    width: 80vh;
+    height: 80vh; 
+    /* Hey. Inelegant solution here hardcoded in convertGridtoDivs. Sorry! */
+    background-color: var(--secondary-color);
+    text-align: center;
 }
+
+.row {
+    margin: auto;
+    position: relative;
+    background-color: var(--secondary-color);
+    display: flex;
+}
+
+.entry {
+    display: inline-block;
+    position: relative;
+    background-color: var(--primary-color);
+    border-radius: 25%;
+}
+
+.edge {
+    position: relative;
+    margin: auto;
+    display: inline-block;
+    background-color: var(--tertiary-color);
+    border-radius: 5%;
+}
+
+.vertex {
+    display: inline-block;
+    background-color: var(--tertiary-color);
+    border-radius: 50%;
+}
+
+.egress {
+    display: inline-block;
+    border-radius: 25%;
+    background-color: darkslategray;
+
+}
+
+.empty {
+    display: inline-block;
+    background-color: var(--secondary-color);
+}
+
+.error {
+    display: inline-block;
+    background-color: red;
+}
+
+.customizer {
+    margin: auto;
+    color: white;
+}
+
