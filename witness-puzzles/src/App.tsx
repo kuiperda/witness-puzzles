@@ -1,6 +1,5 @@
 import './App.css';
 import React, { useState } from 'react';
-import { classicNameResolver, visitEachChild } from 'typescript';
 
 function App() {
 
@@ -25,6 +24,7 @@ function App() {
   ]
 
   const [grid, setGrid] = useState(basic2x2);
+  // const [playerGrid, setPlayerGrid] = useState(basic2x2); 
   const [pageToDisplay, setPageToDisplay] = useState('puzzle');
   const [puzzle, setPuzzle] = useState(<div>No puzzle here yet</div>);
 
@@ -34,28 +34,26 @@ function App() {
     const puzzleImage = grid.map((row: Array<String>, yIndex) => {
       return <div key={`${yIndex}`} className='row' style={{height: `${puzzleHeight / gridSize}vh`}}>
         {row.map((part: String, xIndex) => {
-        // console.log(`${yIndex}, ${xIndex}`);
-        // return <span key={`${yIndex}.${xIndex}`}>{part}</span>
         switch(part) {
           case 'O': {
-            return <span key={`${yIndex}.${xIndex}`} className='entry' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='entry' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           case 'e': {
             return yIndex % 2 === 0 ? 
-              <span key={`${yIndex}.${xIndex}`} className='edge' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}></span> :
-              <span key={`${yIndex}.${xIndex}`} className='edge' style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}></span> ;
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='edge' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}></span> :
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='edge' style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}></span> ;
           }
           case 'v': {
-            return <span key={`${yIndex}.${xIndex}`} className='vertex' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='vertex' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           case '-': {
-            return <span key={`${yIndex}.${xIndex}`} className='egress' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='egress' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           case ' ': {
-            return <span key={`${yIndex}.${xIndex}`} className='empty' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='empty' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           default: {
-            return <span key={`${yIndex}.${xIndex}`} className='error' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='error' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
         }
       })}
@@ -64,7 +62,6 @@ function App() {
     return puzzleImage;
   };
 
-  // TODO: given them variable state while playing
   const handleClickGenerateButton = () => {
     setPuzzle(<div>{convertGridToDivs(grid)}</div>);
     setPageToDisplay('puzzle');
@@ -73,8 +70,13 @@ function App() {
   const handleClickCustomizeButton = () => setPageToDisplay('customizer');
 
   return (
+    // TODO: give puzzleImage divs a variable state while playing. used an ID, now make a player and access it
+    // you can make a separate playerposition grid and have logic from there update the image, you know the logic already
     // player with puzzle image that lets you play through the puzzle and solve it 
-    // eventually, a puzzle solution finder and being able to save puzzles you've solved
+    // then add extra rules and checking if you can solve them
+    // then add puzzle generator and customization
+    // eventually, a puzzle solution finder and being able to save puzzles you've solved- could make this really cool looking
+      // like having it try a bunch of paths in real time automatically in front of you then pause when it finds a solution, then 'next'
     // eventually, a puzzle editor
     // eventually, support for unique puzzle mods
     <div className='app'>
