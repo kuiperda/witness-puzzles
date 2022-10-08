@@ -1,7 +1,7 @@
 :root {
-    --primary-color: steelblue;
+    --primary-color: #4682b4;
     --secondary-color: #353a40;
-    --tertiary-color: beige;
+    --tertiary-color: #f5f5dc;
 }
 
 .app {
@@ -68,10 +68,14 @@
     display: flex;
 }
 
+.activeSegment {
+    background-color: var(--primary-color) !important;
+}
+
 .entry {
     display: inline-block;
     position: relative;
-    background-color: var(--primary-color);
+    background-color: var(--tertiary-color);
     border-radius: 25%;
 }
 
@@ -83,7 +87,7 @@
     border-radius: 5%;
 }
 
-.vertex {
+.ertex {
     display: inline-block;
     background-color: var(--tertiary-color);
     border-radius: 50%;
