@@ -27,6 +27,16 @@ function App() {
     ['O', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
   ]
 
+  const essential3x3 = [
+    ['v', 'e', 'v', 'e', 'V', 'e', '-'],
+    ['e', ' ', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'e', 'v', 'E', 'v', 'e', 'v'],
+    ['e', ' ', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'e', 'v', 'e', 'v', 'e', 'V'],
+    ['e', ' ', 'E', ' ', 'e', ' ', 'e'],
+    ['O', 'e', 'v', 'e', 'v', 'e', 'v'],
+  ]
+
   // Creates a matrix to keep track of which puzzle segments are active for up to 8x8 grids
   let litUpSegmentsArray : Array<Array<Boolean>> = [];
   for (let i = 0; i < 17; i++) {
@@ -40,7 +50,7 @@ function App() {
   // TODO: add much more specific typing to state variables
 
   // Set which puzzle 'grid' is being played
-  const [grid, setGrid] = useState(basic4x4);
+  const [grid, setGrid] = useState(essential3x3);
 
   // Set which page is currently being displayed
   // TODO: type this better to only allow valid pages
@@ -84,8 +94,22 @@ function App() {
               <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}></span> :
               <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}></span> ;
           }
+          case 'E': {
+            return yIndex % 2 === 0 ? // even rows are horizontal, odd rows vertical
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}>
+                <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.0625}vh`}}></div>
+              </span> :
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}>
+                <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.4}vh`}}></div>
+              </span> ;
+          }
           case 'v': {
             return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+          }
+          case 'V': {
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}>
+              <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.4}vh`}}></div>
+            </span>
           }
           case '-': {
             return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='egress' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
@@ -162,7 +186,7 @@ function App() {
       if(shouldBreak) {return};
     }
     // Path is moving forward, add next two segments to path and light them up
-    if(currentY > 0 && grid[currentY - 1][currentX] === 'e' && grid[currentY - 2][currentX] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+    if(currentY > 0 && grid[currentY - 1][currentX] === 'e' || grid[currentY - 1][currentX] === 'E' && grid[currentY - 2][currentX] === 'v' || grid[currentY - 2][currentX] === 'V' || grid[currentY - 2][currentX] === '-') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
       setPlayerPath(prevState => { // TODO: better way to copy than this?
         let newPath = prevState.map((coordPair) => { 
           return coordPair;
@@ -226,7 +250,7 @@ function App() {
       if(shouldBreak) {return};
     }
     // Path is moving forward, add next two segments to path and light them up
-    if(currentY < grid.length - 1 && grid[currentY + 1][currentX] === 'e' && grid[currentY + 2][currentX] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+    if(currentY < grid.length - 1 && grid[currentY + 1][currentX] === 'e' || grid[currentY + 1][currentX] === 'E' && grid[currentY + 2][currentX] === 'v' || grid[currentY + 2][currentX] === 'V' || grid[currentY + 2][currentX] === '-') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
       setPlayerPath(prevState => { // TODO: better way to copy than this?
         let newPath = prevState.map((coordPair) => { 
           return coordPair;
@@ -289,7 +313,7 @@ function App() {
       if(shouldBreak) {return};
     }
     // Path is moving forward, add next two segments to path and light them up
-    if(currentX > 0 && grid[currentY][currentX - 1] === 'e' && grid[currentY][currentX - 2] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+    if(currentX > 0 && grid[currentY][currentX - 1] === 'e' || grid[currentY][currentX - 1] === 'E' && grid[currentY][currentX - 2] === 'v' || grid[currentY][currentX - 2] === 'V' || grid[currentY][currentX - 2] === '-') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
       setPlayerPath(prevState => { // TODO: better way to copy than this?
         let newPath = prevState.map((coordPair) => { 
           return coordPair;
@@ -353,7 +377,7 @@ function App() {
       if(shouldBreak) {return};
     }
     // Path is moving forward, add next two segments to path and light them up
-    if(currentX < grid.length - 1 && grid[currentY][currentX + 1] === 'e' && grid[currentY][currentX + 2] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+    if(currentX < grid.length - 1 && grid[currentY][currentX + 1] === 'e'|| grid[currentY][currentX + 1] === 'E' && grid[currentY][currentX + 2] === 'v' || grid[currentY][currentX + 2] === 'V' || grid[currentY][currentX + 2] === '-') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
       setPlayerPath(prevState => { // TODO: better way to copy than this?
         let newPath = prevState.map((coordPair) => { 
           return coordPair;

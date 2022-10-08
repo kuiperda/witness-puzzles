@@ -1,7 +1,8 @@
 :root {
-    --primary-color: #4682b4;
+    --primary-color: steelblue;
     --secondary-color: #353a40;
-    --tertiary-color: #f5f5dc;
+    --tertiary-color: grey;
+    --highlight-color: gold;
 }
 
 .app {
@@ -69,7 +70,7 @@
 }
 
 .activeSegment {
-    background-color: var(--primary-color) !important;
+    background-color: var(--highlight-color) !important;
 }
 
 .entry {
@@ -85,11 +86,20 @@
     display: inline-block;
     background-color: var(--tertiary-color);
     border-radius: 5%;
+    text-align: center;
 }
 
 .ertex {
     display: inline-block;
     background-color: var(--tertiary-color);
+    border-radius: 50%;
+    text-align: center;
+}
+
+.essential {
+    position: relative;
+    margin: auto;
+    background-color: black;
     border-radius: 50%;
 }
 
