@@ -1,11 +1,11 @@
 import './App.css';
-import React, { useState } from 'react';
-import {useEffect, useRef} from 'react';
+import React, { useState , useEffect } from 'react';
 
 function App() {
 
   // Assumptions this program makes:
   // Grids will have only one entry location, at the bottom left, and one egress location, at the top right.
+  // handleMove functions assume grid is a perfect square. 
 
   const basic2x2 = [
     ['v', 'e', 'v', 'e', '-'],
@@ -106,88 +106,284 @@ function App() {
   const handleClickGenerateButton = () => {
     setPuzzle(<div>{convertGridToDivs(grid)}</div>);
     setPlayerPath([[grid.length - 1, 0]]); // TODO?: Based on the assumption about start location
+    setLitUpSegments(prevState => { 
+      let startingFreshState = prevState.map(row => {
+        return row.map(bool => {
+          return bool;
+        })
+      });
+      startingFreshState[grid.length - 1][0] = true; // TODO? Again, based on assumption about start location
+      return startingFreshState;
+    }); 
     setPageToDisplay('puzzle');
   }
 
   const handleClickCustomizeButton = () => setPageToDisplay('customizer'); // TODO: better typing of pages
 
 
-
-
-
-
-
-
-
-  // TODO: handle when move is going backwards to remove from path instead
-  // don't allow if move was a while ago
-  // allow going back if it was the last move you did
+// TODO?: Merge these into one function, they are mostly redundant
 
   const handleMoveUp = () => {
-    let currentY = playerPath[-1][0];
-    let currentX = playerPath[-1][1];
-    if(currentY > 0 && grid[currentY - 1][currentX] === 'e' && grid[currentY - 2][currentX] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
-      // setPlayerPath([[8,0],[7,0],[6,0]]);
-      // setPlayerPath(prevState => {
-      //   let newPath = prevState;
-      //   console.log(newPath);
-      //   newPath.push([currentY - 1, currentX]);
-      //   newPath.push([currentY - 2, currentX]);
-      //   console.log(newPath);
-      //   return newPath;
-      // });
-      // setLitUpSegments(prevState => {
-      //   let newState = prevState;
-      //   newState[currentY - 1][currentX] = !newState[currentY - 1][currentX];
-      //   newState[currentY - 2][currentX] = !newState[currentY - 2][currentX];
-      //   return newState;
-      // })
+    let currentY = playerPath[playerPath.length - 1][0];
+    let currentX = playerPath[playerPath.length - 1][1];
+    // Path is moving backwards, go back one
+    if(playerPath.length > 1) {
+      if(playerPath[playerPath.length - 2][0] === currentY - 1 && playerPath[playerPath.length - 2][1] === currentX) {
+        setPlayerPath(prevState => { // TODO: better way to copy than this?
+          let newPath = prevState.map((coordPair) => { 
+            return coordPair;
+          });
+          newPath.pop();
+          newPath.pop();
+          return newPath;
+        });
+        setLitUpSegments(prevState => { // TODO: better way to copy than this?
+          let newState = prevState.map((row) => {
+            return row.map((bool) => {
+              return bool;
+            })
+          });
+          newState[currentY][currentX] = !newState[currentY][currentX];
+          newState[currentY - 1][currentX] = !newState[currentY - 1][currentX];
+          return newState;
+        });
+        console.log("Went Backwards (Up)");
+        return;
+      }
+      // Path is trying to cross itself, deny this
+      let shouldBreak = false;
+      playerPath.forEach((coordPair) => {
+        if(coordPair[0] === currentY - 2 && coordPair[1] === currentX) {
+          console.log("Cannot cross path (Up)");
+          shouldBreak = true;
+          return;
+        }
+      });
+      if(shouldBreak) {return};
     }
-    console.log("up");
-  }
-
-  const handleMoveLeft = () => {
-    console.log("left");
+    // Path is moving forward, add next two segments to path and light them up
+    if(currentY > 0 && grid[currentY - 1][currentX] === 'e' && grid[currentY - 2][currentX] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+      setPlayerPath(prevState => { // TODO: better way to copy than this?
+        let newPath = prevState.map((coordPair) => { 
+          return coordPair;
+        });
+        newPath.push([currentY - 1, currentX]);
+        newPath.push([currentY - 2, currentX]);
+        return newPath;
+      });
+      setLitUpSegments(prevState => { // TODO: better way to copy than this?
+        let newState = prevState.map((row) => {
+          return row.map((bool) => {
+            return bool;
+          })
+        });
+        newState[currentY - 1][currentX] = !newState[currentY - 1][currentX];
+        newState[currentY - 2][currentX] = !newState[currentY - 2][currentX];
+        return newState;
+      });
+      console.log("Moved Forwards (Up)");
+      return;
+    }
+    console.log("Error trying to move up");
   }
 
   const handleMoveDown = () => {
-    console.log("down");
+    let currentY = playerPath[playerPath.length - 1][0];
+    let currentX = playerPath[playerPath.length - 1][1];
+    // Path is moving backwards, go back one
+    if(playerPath.length > 1) {
+      if(playerPath[playerPath.length - 2][0] === currentY + 1 && playerPath[playerPath.length - 2][1] === currentX) {
+        setPlayerPath(prevState => { // TODO: better way to copy than this?
+          let newPath = prevState.map((coordPair) => { 
+            return coordPair;
+          });
+          newPath.pop();
+          newPath.pop();
+          return newPath;
+        });
+        setLitUpSegments(prevState => { // TODO: better way to copy than this?
+          let newState = prevState.map((row) => {
+            return row.map((bool) => {
+              return bool;
+            })
+          });
+          newState[currentY][currentX] = !newState[currentY][currentX];
+          newState[currentY + 1][currentX] = !newState[currentY + 1][currentX];
+          return newState;
+        });
+        console.log("Went Backwards (Down)");
+        return;
+      }
+      // Path is trying to cross itself, deny this
+      let shouldBreak = false;
+      playerPath.forEach((coordPair) => {
+        if(coordPair[0] === currentY + 2 && coordPair[1] === currentX) {
+          console.log("Cannot cross path (Down)");
+          shouldBreak = true;
+          return;
+        }
+      });
+      if(shouldBreak) {return};
+    }
+    // Path is moving forward, add next two segments to path and light them up
+    if(currentY < grid.length - 1 && grid[currentY + 1][currentX] === 'e' && grid[currentY + 2][currentX] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+      setPlayerPath(prevState => { // TODO: better way to copy than this?
+        let newPath = prevState.map((coordPair) => { 
+          return coordPair;
+        });
+        newPath.push([currentY + 1, currentX]);
+        newPath.push([currentY + 2, currentX]);
+        return newPath;
+      });
+      setLitUpSegments(prevState => { // TODO: better way to copy than this?
+        let newState = prevState.map((row) => {
+          return row.map((bool) => {
+            return bool;
+          })
+        });
+        newState[currentY + 1][currentX] = !newState[currentY + 1][currentX];
+        newState[currentY + 2][currentX] = !newState[currentY + 2][currentX];
+        return newState;
+      });
+      console.log("Moved Forwards (Down)");
+      return;
+    }
+    console.log("Error trying to move down");
+  }
+
+  const handleMoveLeft = () => {
+    let currentY = playerPath[playerPath.length - 1][0];
+    let currentX = playerPath[playerPath.length - 1][1];
+    // Path is moving backwards, go back one
+    if(playerPath.length > 1) {
+      if(playerPath[playerPath.length - 2][0] === currentY && playerPath[playerPath.length - 2][1] === currentX - 1) {
+        setPlayerPath(prevState => { // TODO: better way to copy than this?
+          let newPath = prevState.map((coordPair) => { 
+            return coordPair;
+          });
+          newPath.pop();
+          newPath.pop();
+          return newPath;
+        });
+        setLitUpSegments(prevState => { // TODO: better way to copy than this?
+          let newState = prevState.map((row) => {
+            return row.map((bool) => {
+              return bool;
+            })
+          });
+          newState[currentY][currentX] = !newState[currentY][currentX];
+          newState[currentY][currentX - 1] = !newState[currentY][currentX - 1];
+          return newState;
+        });
+        return;
+      }
+      // Path is trying to cross itself, deny this
+      let shouldBreak = false;
+      playerPath.forEach((coordPair) => {
+        if(coordPair[0] === currentY && coordPair[1] === currentX - 2) {
+          console.log("Cannot cross path (Left)");
+          shouldBreak = true;
+          return;
+        }
+      });
+      if(shouldBreak) {return};
+    }
+    // Path is moving forward, add next two segments to path and light them up
+    if(currentX > 0 && grid[currentY][currentX - 1] === 'e' && grid[currentY][currentX - 2] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+      setPlayerPath(prevState => { // TODO: better way to copy than this?
+        let newPath = prevState.map((coordPair) => { 
+          return coordPair;
+        });
+        newPath.push([currentY, currentX - 1]);
+        newPath.push([currentY, currentX - 2]);
+        return newPath;
+      });
+      setLitUpSegments(prevState => { // TODO: better way to copy than this?
+        let newState = prevState.map((row) => {
+          return row.map((bool) => {
+            return bool;
+          })
+        });
+        newState[currentY][currentX - 1] = !newState[currentY][currentX - 1];
+        newState[currentY][currentX - 2] = !newState[currentY][currentX - 2];
+        return newState;
+      });
+      console.log("Moved Forwards (Left)");
+      return;
+    }
+    console.log("Error trying to move left");
   }
 
   const handleMoveRight = () => {
-    console.log("right");
+    let currentY = playerPath[playerPath.length - 1][0];
+    let currentX = playerPath[playerPath.length - 1][1];
+    // Path is moving backwards, go back one
+    if(playerPath.length > 1) {
+      if(playerPath[playerPath.length - 2][0] === currentY && playerPath[playerPath.length - 2][1] === currentX + 1) {
+        setPlayerPath(prevState => { // TODO: better way to copy than this?
+          let newPath = prevState.map((coordPair) => { 
+            return coordPair;
+          });
+          newPath.pop();
+          newPath.pop();
+          return newPath;
+        });
+        setLitUpSegments(prevState => { // TODO: better way to copy than this?
+          let newState = prevState.map((row) => {
+            return row.map((bool) => {
+              return bool;
+            })
+          });
+          newState[currentY][currentX] = !newState[currentY][currentX];
+          newState[currentY][currentX + 1] = !newState[currentY][currentX + 1];
+          return newState;
+        });
+        console.log("Went Backwards (Right)");
+        return;
+      }
+      // Path is trying to cross itself, deny this
+      let shouldBreak = false;
+      playerPath.forEach((coordPair) => {
+        if(coordPair[0] === currentY && coordPair[1] === currentX + 2) {
+          console.log("Cannot cross path (Right)");
+          shouldBreak = true;
+          return;
+        }
+      });
+      if(shouldBreak) {return};
+    }
+    // Path is moving forward, add next two segments to path and light them up
+    if(currentX < grid.length - 1 && grid[currentY][currentX + 1] === 'e' && grid[currentY][currentX + 2] === 'v') { // TODO: use better types to allow less hardcoding. and to allow finishing the puzzle
+      setPlayerPath(prevState => { // TODO: better way to copy than this?
+        let newPath = prevState.map((coordPair) => { 
+          return coordPair;
+        });
+        newPath.push([currentY, currentX + 1]);
+        newPath.push([currentY, currentX + 2]);
+        return newPath;
+      });
+      setLitUpSegments(prevState => { // TODO: better way to copy than this?
+        let newState = prevState.map((row) => {
+          return row.map((bool) => {
+            return bool;
+          })
+        });
+        newState[currentY][currentX + 1] = !newState[currentY][currentX + 1];
+        newState[currentY][currentX + 2] = !newState[currentY][currentX + 2];
+        return newState;
+      });
+      console.log("Moved Forwards (Right)");
+      return;
+    }
+    console.log("Error trying to move right");
   }
-
-    // read in keypress value, if valid, 
-    // make logic to see where player is allowed to go
-    // make changes based on what their keypress does
-    // display those changes in real time to make puzzle playable
-
-    // later, check if puzzle rules were solved
-
-    // setLitUpSegments(prevState => {
-    //   let newState = prevState.map(row => {
-    //     return row.map(item => {
-    //       return !item; // test
-    //     })
-    //   });
-    //   return newState;
-    // });
 
   // Whenever the litUpSegments state changes (normally on keydown), recreate the puzzle to reflect the changes
   // TODO: handle any problems with the first load of the puzzle before hitting generate (it gets created immediately, atm)
+  // Including 'entry' not being lit up before generate
   useEffect(() => {
     setPuzzle(<div>{convertGridToDivs(grid)}</div>); // TODO: figure out how to make puzzle update without recreating it
   }, [litUpSegments]);
-
-
-
-
-
-
-
-
-
 
   // TODO: figure out how to keep focus on the puzzle when it is on screen
   // Captures key presses so puzzle can be played (with WASD)
@@ -197,12 +393,12 @@ function App() {
         handleMoveUp();
         break;
       }
-      case 'A': {
-        handleMoveLeft();
-        break;
-      }
       case 'S': {
         handleMoveDown();
+        break;
+      }
+      case 'A': {
+        handleMoveLeft();
         break;
       }
       case 'D': {
@@ -210,9 +406,13 @@ function App() {
         break;
       }
     }
+    console.log(playerPath);
   }
 
   return (
+    // TODO: make it so basic (nonlogic) puzzle is solveable by reaching the egress
+
+
     // TODO: make a makeNxN function for starters
     // TODO: reset puzzle parameters on generate, but also consider allowing players to return to puzzle without hitting generate (from cust)
     // break into more modular components
