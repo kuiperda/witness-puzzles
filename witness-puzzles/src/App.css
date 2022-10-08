@@ -1,8 +1,13 @@
 :root {
-    --primary-color: steelblue;
+    --primary-color: #295D8A;
+    --tertiary-color: 	#71797E;
+
     --secondary-color: #353a40;
-    --tertiary-color: grey;
-    --highlight-color: gold;
+    /* --highlight-color: #40E0D0; */
+
+    /* --secondary-color: #424242; */
+    --highlight-color: #10CDE1;
+
 }
 
 .app {
@@ -60,6 +65,7 @@
     /* Hey. Inelegant solution here hardcoded in convertGridtoDivs. Sorry! */
     background-color: var(--secondary-color);
     text-align: center;
+    color: var(--highlight-color);
 }
 
 .row {
@@ -106,7 +112,10 @@
 .egress {
     display: inline-block;
     border-radius: 25%;
-    background-color: darkslategray;
+    /* background-color: darkslategray; */
+    /* background-color: gold; */
+    /* background-color: #191970; */
+
 
 }
 

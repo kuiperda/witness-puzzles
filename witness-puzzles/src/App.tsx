@@ -50,14 +50,14 @@ function App() {
   // TODO: add much more specific typing to state variables
 
   // Set which puzzle 'grid' is being played
-  const [grid, setGrid] = useState(essential3x3);
+  const [grid, setGrid] = useState(basic4x4);
 
   // Set which page is currently being displayed
   // TODO: type this better to only allow valid pages
   const [pageToDisplay, setPageToDisplay] = useState('puzzle');
 
   // Set the divs that will display the puzzle (use convertGridToDivs for this)
-  const [puzzle, setPuzzle] = useState(<div>No puzzle here yet</div>);
+  const [puzzle, setPuzzle] = useState(<div><div>There's... no puzzle here.</div><div>...Unless there's puzzle here.</div></div>);
 
   // Set the matrix that keeps track of which segments are active
   const [litUpSegments, setLitUpSegments] = useState(litUpSegmentsArray);
@@ -65,6 +65,8 @@ function App() {
   // Set the array that will keep track of the coordinates of where the player has been in the puzzle
   let pathArray : Array<Array<number>> = [];
   const [playerPath, setPlayerPath] = useState(pathArray); 
+
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Take the current grid and make the divs to display the puzzle
   const convertGridToDivs = (grid: Array<Array<String>>) => {
@@ -133,19 +135,21 @@ function App() {
     setLitUpSegments(prevState => { 
       let startingFreshState = prevState.map(row => {
         return row.map(bool => {
-          return bool;
+          return false;
         })
       });
       startingFreshState[grid.length - 1][0] = true; // TODO? Again, based on assumption about start location
       return startingFreshState;
     }); 
     setPageToDisplay('puzzle');
+    setIsPlaying(true);
   }
 
   const handleClickCustomizeButton = () => setPageToDisplay('customizer'); // TODO: better typing of pages
 
 
 // TODO?: Merge these into one function, they are mostly redundant
+// TODO?: Handle errors when moving up or down at the extents
 
   const handleMoveUp = () => {
     let currentY = playerPath[playerPath.length - 1][0];
@@ -171,7 +175,7 @@ function App() {
           newState[currentY - 1][currentX] = !newState[currentY - 1][currentX];
           return newState;
         });
-        console.log("Went Backwards (Up)");
+        console.log("Moved Backwards (Up)");
         return;
       }
       // Path is trying to cross itself, deny this
@@ -235,7 +239,7 @@ function App() {
           newState[currentY + 1][currentX] = !newState[currentY + 1][currentX];
           return newState;
         });
-        console.log("Went Backwards (Down)");
+        console.log("Moved Backwards (Down)");
         return;
       }
       // Path is trying to cross itself, deny this
@@ -299,6 +303,7 @@ function App() {
           newState[currentY][currentX - 1] = !newState[currentY][currentX - 1];
           return newState;
         });
+        console.log("Moved Backwards (Left)");
         return;
       }
       // Path is trying to cross itself, deny this
@@ -362,7 +367,7 @@ function App() {
           newState[currentY][currentX + 1] = !newState[currentY][currentX + 1];
           return newState;
         });
-        console.log("Went Backwards (Right)");
+        console.log("Moved Backwards (Right)");
         return;
       }
       // Path is trying to cross itself, deny this
@@ -402,35 +407,90 @@ function App() {
     console.log("Error trying to move right");
   }
 
-  // Whenever the litUpSegments state changes (normally on keydown), recreate the puzzle to reflect the changes
-  // TODO: handle any problems with the first load of the puzzle before hitting generate (it gets created immediately, atm)
-  // Including 'entry' not being lit up before generate
+  const handleMoveBack = () => {
+    if(playerPath.length > 1) {
+      let currentY = playerPath[playerPath.length - 1][0];
+      let currentX = playerPath[playerPath.length - 1][1];
+      let prevCurrentY = playerPath[playerPath.length - 2][0];
+      let prevCurrentX = playerPath[playerPath.length - 2][1];
+      // Path is moving backwards, go back one  
+      setPlayerPath(prevState => { // TODO: better way to copy than this?
+        let newPath = prevState.map((coordPair) => { 
+          return coordPair;
+        });
+        newPath.pop();
+        newPath.pop();
+        return newPath;
+      });
+      setLitUpSegments(prevState => { // TODO: better way to copy than this?
+        let newState = prevState.map((row) => {
+          return row.map((bool) => {
+            return bool;
+          })
+        });
+        newState[currentY][currentX] = !newState[currentY][currentX];
+        newState[prevCurrentY][prevCurrentX] = !newState[prevCurrentY][prevCurrentX];
+        return newState;
+      });
+      console.log("Went Backwards (Backspace)");
+      return;
+    }
+  }
+
+  const checkIfSolved = () => {
+    if(playerPath[playerPath.length - 1][0] === 0 && playerPath[playerPath.length - 1][1] === grid.length - 1) { // Assumption
+      setIsPlaying(false);
+      let checksWereFailed = false;
+      checksWereFailed = !(essentialsAreSolved() || true); // will replace true with other checks later
+
+      if(checksWereFailed) {
+        console.log("Finished but not solved"); // TODO: make it smart and know which parts of the puzzle weren't solved
+      } else {console.log("Puzzle solved!")} // TODO: handle gracefully, maybe add some fun css animations
+    }
+  }
+
+  const essentialsAreSolved = () => {
+    let essentialsAreHappy = true;
+    // check each spot in grid for an essential, check each part of path to see if location has been touched. 
+    // grid.map()
+    return essentialsAreHappy;
+  }
+
+  // Whenever the litUpSegments state changes (normally on keydown), recreate the puzzle to reflect the changes, and check if it has been solved
   useEffect(() => {
-    setPuzzle(<div>{convertGridToDivs(grid)}</div>); // TODO: figure out how to make puzzle update without recreating it
+    if(isPlaying) {
+      setPuzzle(<div>{convertGridToDivs(grid)}</div>); // TODO: figure out how to make puzzle update without recreating it
+      checkIfSolved();
+    }
   }, [litUpSegments]);
 
   // TODO: figure out how to keep focus on the puzzle when it is on screen
   // Captures key presses so puzzle can be played (with WASD)
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    switch (event.key.toUpperCase()) {
-      case 'W': {
-        handleMoveUp();
-        break;
-      }
-      case 'S': {
-        handleMoveDown();
-        break;
-      }
-      case 'A': {
-        handleMoveLeft();
-        break;
-      }
-      case 'D': {
-        handleMoveRight();
-        break;
-      }
+    if(isPlaying) {
+      switch (event.key.toUpperCase()) {
+        case 'W': {
+          handleMoveUp();
+          break;
+        }
+        case 'S': {
+          handleMoveDown();
+          break;
+        }
+        case 'A': {
+          handleMoveLeft();
+          break;
+        }
+        case 'D': {
+          handleMoveRight();
+          break;
+        }
+        case 'BACKSPACE': {
+          handleMoveBack();
+          break;
+        }
+      }  
     }
-    console.log(playerPath);
   }
 
   return (
