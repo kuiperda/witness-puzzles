@@ -50,7 +50,7 @@ function App() {
   // TODO: add much more specific typing to state variables
 
   // Set which puzzle 'grid' is being played
-  const [grid, setGrid] = useState(basic4x4);
+  const [grid, setGrid] = useState(essential3x3);
 
   // Set which page is currently being displayed
   // TODO: type this better to only allow valid pages
@@ -441,7 +441,7 @@ function App() {
     if(playerPath[playerPath.length - 1][0] === 0 && playerPath[playerPath.length - 1][1] === grid.length - 1) { // Assumption
       setIsPlaying(false);
       let checksWereFailed = false;
-      checksWereFailed = !(essentialsAreSolved() || true); // will replace true with other checks later
+      checksWereFailed = !(essentialsAreSolved() && true); // will replace true with other checks later
 
       if(checksWereFailed) {
         console.log("Finished but not solved"); // TODO: make it smart and know which parts of the puzzle weren't solved
@@ -451,8 +451,20 @@ function App() {
 
   const essentialsAreSolved = () => {
     let essentialsAreHappy = true;
-    // check each spot in grid for an essential, check each part of path to see if location has been touched. 
-    // grid.map()
+    grid.forEach((row, yIndex) => {
+      row.forEach((item, xIndex) => {
+        if(item === 'E' || item === 'V') {
+          let satisfied = false;
+          playerPath.forEach((coordPair) => {
+            if(coordPair[0] === yIndex && coordPair[1] === xIndex) {
+              satisfied = true; 
+              return;
+            }
+          });
+          if(!satisfied) {essentialsAreHappy = false}
+        }
+      })
+    })
     return essentialsAreHappy;
   }
 
@@ -494,7 +506,13 @@ function App() {
   }
 
   return (
-    // TODO: make it so basic (nonlogic) puzzle is solveable by reaching the egress
+
+    // TODO: make egress exist
+    // TODO: add squares solving logic
+    // TODO: cleanup code
+    // TODO: Generate puzzles, maybe start using customizer for it
+
+
 
 
     // TODO: make a makeNxN function for starters
