@@ -15,6 +15,14 @@ function App() {
     ['O', 'e', 'v', 'e', 'v'],
   ];
 
+  const essential2x2 = [
+    ['V', 'E', 'V', 'E', '-'],
+    ['E', ' ', 'e', ' ', 'e'],
+    ['V', 'E', 'V', 'E', 'V'],
+    ['e', ' ', 'e', ' ', 'E'],
+    ['O', 'E', 'V', 'E', 'V'],
+  ];
+
   const basic4x4 = [
     ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', '-'],
     ['e', ' ', 'e', ' ', 'e', ' ', 'e', ' ', 'e'],
@@ -37,6 +45,30 @@ function App() {
     ['O', 'e', 'v', 'e', 'v', 'e', 'v'],
   ]
 
+  const squares4x4 = [
+    ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', '-'],
+    ['e', 'W', 'e', ' ', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+    ['e', 'W', 'e', 'W', 'e', ' ', 'e', 'B', 'e'],
+    ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+    ['e', ' ', 'e', 'B', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+    ['e', ' ', 'e', 'B', 'e', ' ', 'e', 'W', 'e'],
+    ['O', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+  ]
+
+  const essentialAndSquares4x4 = [
+    ['v', 'e', 'v', 'e', 'v', 'e', 'v', 'e', '-'],
+    ['e', 'W', 'e', ' ', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'e', 'v', 'e', 'V', 'e', 'v', 'e', 'v'],
+    ['e', 'W', 'e', 'W', 'e', ' ', 'e', 'B', 'e'],
+    ['v', 'e', 'v', 'e', 'v', 'e', 'V', 'e', 'v'],
+    ['e', ' ', 'e', 'B', 'e', ' ', 'e', ' ', 'e'],
+    ['v', 'E', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+    ['e', ' ', 'e', 'B', 'e', ' ', 'e', 'W', 'e'],
+    ['O', 'e', 'v', 'e', 'v', 'e', 'v', 'e', 'v'],
+  ]
+
   // Creates a matrix to keep track of which puzzle segments are active for up to 8x8 grids
   let litUpSegmentsArray : Array<Array<Boolean>> = [];
   for (let i = 0; i < 17; i++) {
@@ -50,7 +82,7 @@ function App() {
   // TODO: add much more specific typing to state variables
 
   // Set which puzzle 'grid' is being played
-  const [grid, setGrid] = useState(essential3x3);
+  const [grid, setGrid] = useState(essentialAndSquares4x4);
 
   // Set which page is currently being displayed
   // TODO: type this better to only allow valid pages
@@ -67,6 +99,8 @@ function App() {
   const [playerPath, setPlayerPath] = useState(pathArray); 
 
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const [puzzleSolved, setPuzzleSolved] = useState(false);
 
   // Take the current grid and make the divs to display the puzzle
   const convertGridToDivs = (grid: Array<Array<String>>) => {
@@ -98,23 +132,29 @@ function App() {
           }
           case 'E': {
             return yIndex % 2 === 0 ? // even rows are horizontal, odd rows vertical
-              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}>
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize / 3}vh`}}>
                 <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.0625}vh`}}></div>
               </span> :
-              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}>
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`edge ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize / 3}vh`, height: `${puzzleHeight / gridSize}vh`}}>
                 <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.4}vh`}}></div>
               </span> ;
           }
           case 'v': {
-            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           case 'V': {
-            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] === true ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}>
               <div className='essential' style={{width: `${puzzleHeight / gridSize / 5}vh`, height: `${puzzleHeight / gridSize / 5}vh`, top: `${puzzleHeight / gridSize * 0.4}vh`}}></div>
             </span>
           }
+          case 'W': {
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='whiteSquare' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+          }
+          case 'B': {
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='blackSquare' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+          }
           case '-': {
-            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='egress' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`egress ${puzzleSolved ? 'solvedAnimation' : ' '}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
           }
           case ' ': {
             return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className='empty' style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
@@ -143,6 +183,7 @@ function App() {
     }); 
     setPageToDisplay('puzzle');
     setIsPlaying(true);
+    setPuzzleSolved(false);
   }
 
   const handleClickCustomizeButton = () => setPageToDisplay('customizer'); // TODO: better typing of pages
@@ -441,11 +482,14 @@ function App() {
     if(playerPath[playerPath.length - 1][0] === 0 && playerPath[playerPath.length - 1][1] === grid.length - 1) { // Assumption
       setIsPlaying(false);
       let checksWereFailed = false;
-      checksWereFailed = !(essentialsAreSolved() && true); // will replace true with other checks later
+      checksWereFailed = !(essentialsAreSolved() && squaresAreSolved()); // will replace true with other checks later
 
       if(checksWereFailed) {
         console.log("Finished but not solved"); // TODO: make it smart and know which parts of the puzzle weren't solved
-      } else {console.log("Puzzle solved!")} // TODO: handle gracefully, maybe add some fun css animations
+        return; // For some reason it says solved but prints this log twice?? returning fixes it, good enough for now
+      } else {
+        console.log("Puzzle solved!")} // TODO: handle gracefully, maybe add some fun css animations
+        setPuzzleSolved(true);
     }
   }
 
@@ -468,13 +512,124 @@ function App() {
     return essentialsAreHappy;
   }
 
+  const squaresAreSolved = () => {
+    return true;
+    // let squaresAreHappy = true;
+    // // Make an inscribed grid
+    // let inscribedGrid = grid.map((row, i) => {
+    //   return row.map((item, j) => {
+    //     return item;
+    //   });
+    // });
+
+    // playerPath.forEach(coords => {
+    //   let x = coords[0];
+    //   let y = coords[1];
+    //   inscribedGrid[x][y] = "0";
+    // });
+
+    // let squaresToCheck: Array<number[]> = [];
+
+    // grid.forEach((row, yIndex) => {
+    //   row.forEach((item, xIndex) => {
+    //     if(item === 'W' || item === 'B') {
+    //       squaresToCheck.push([yIndex, xIndex]);
+    //       // let satisfied = false;
+    //       // Now check if any square has not been accounted for, but otherwise this one is satisfied
+    //       // satisfied = true; // for now haha
+    //       // add its location to the list to check
+    //       // then check which squares from that list are 'adjacent' 
+    //       // then remove those from the first list
+    //       // then check the next... until done. 
+
+
+
+    //       // TODO: 
+    //       // TRY AGAIN
+
+
+    //       // if(!satisfied) {squaresAreHappy = false}
+    //     }
+    //   });
+    // });
+
+    // let alreadyChecked : Array<number[]> = [];
+
+    // let recursiveSquareCheck = (yCoord: number, xCoord: number) => {
+    //   let alreadyCheckedThis = false; 
+    //   alreadyChecked.forEach(coord => {
+    //     if (coord[0] === yCoord && coord[1] === xCoord) {
+    //       alreadyCheckedThis = true;
+    //     }
+    //   });
+
+    //   if (!alreadyCheckedThis) {
+    //     alreadyChecked.push([yCoord, xCoord]);
+    //     if(yCoord < grid.length - 2 && inscribedGrid[yCoord + 1][xCoord + 0] !== "0") {
+    //       recursiveSquareCheck(yCoord + 2, xCoord + 0);
+    //     }
+    //     if(yCoord > 0 && inscribedGrid[yCoord - 1][xCoord + 0] !== "0") {
+    //       recursiveSquareCheck(yCoord - 2, xCoord + 0);
+    //     }
+    //     if(xCoord < grid.length - 2 && inscribedGrid[yCoord + 0][xCoord + 1] !== "0") {
+    //       recursiveSquareCheck(yCoord + 0, xCoord + 2);
+    //     }
+    //     if(xCoord > 0 && inscribedGrid[yCoord + 0][xCoord - 1] !== "0") {
+    //       recursiveSquareCheck(yCoord + 0, xCoord - 2);
+    //     }
+    //   }
+    // }
+    // // oh, so you need to add squares to check recursively, then keep an array of 
+    //   // already checked squares to not check again forever.
+
+    // // you have the list, now check each square in it.
+    // while(squaresToCheck.length > 0) {
+    //   let currentSquare = squaresToCheck[0];
+    //   // make recursive function to check path bounds 
+    //   recursiveSquareCheck(currentSquare[0], currentSquare[1]);
+    //   // just keep writing code. you can cleanup after. 
+    //   // don't do it 'perfectly' first, just write. 
+
+    //   // reset alreadyChecked, after removing the ones in there from squaresToCheck
+    //   // also check if anything went wrong
+    //   let newSquaresToCheck : Array<number[]> = [];
+    //   squaresToCheck.forEach(coords => {
+    //     let returnThis = true;
+    //     alreadyChecked.forEach(coords2 => {
+    //       if(coords[0] === coords2[0] && coords[1] === coords2[1]) {
+    //         returnThis = false;
+    //       } 
+    //     });
+    //     if (returnThis) {
+    //       newSquaresToCheck.push(coords);
+    //     }
+    //   });
+    //   squaresToCheck = [];
+    //   newSquaresToCheck.forEach(coord => {
+    //     squaresToCheck.push(coord);
+    //   });
+
+    //   let areWeOkayArray = alreadyChecked.map(coords => {
+    //     return grid[coords[0]][coords[1]];
+    //   });
+
+    //   if (areWeOkayArray.includes("B") && areWeOkayArray.includes("W")) {
+    //     squaresAreHappy = false;
+    //   }
+
+    //   alreadyChecked = [];
+    // }
+
+    // return squaresAreHappy;
+  }
+
   // Whenever the litUpSegments state changes (normally on keydown), recreate the puzzle to reflect the changes, and check if it has been solved
   useEffect(() => {
-    if(isPlaying) {
+    if(isPlaying || puzzleSolved) {
       setPuzzle(<div>{convertGridToDivs(grid)}</div>); // TODO: figure out how to make puzzle update without recreating it
-      checkIfSolved();
+      if(!puzzleSolved) checkIfSolved();
     }
-  }, [litUpSegments]);
+  }, [litUpSegments, puzzleSolved]);
 
   // TODO: figure out how to keep focus on the puzzle when it is on screen
   // Captures key presses so puzzle can be played (with WASD)
@@ -507,13 +662,15 @@ function App() {
 
   return (
 
-    // TODO: make egress exist
     // TODO: add squares solving logic
     // TODO: cleanup code
     // TODO: Generate puzzles, maybe start using customizer for it
+    // TODO: make egress flash deeper when puzzle *not* solved, and remove path
 
+    // TODO: move generate logic to 'retry' button and have generate separate in customize
 
-
+    // lighting of path fade or glow when unfinished or solved
+    
 
     // TODO: make a makeNxN function for starters
     // TODO: reset puzzle parameters on generate, but also consider allowing players to return to puzzle without hitting generate (from cust)

@@ -112,16 +112,37 @@
 .egress {
     display: inline-block;
     border-radius: 25%;
-    /* background-color: darkslategray; */
+    /* background-color: #295D8A; */
+    /* OOH use this color for mirror puzzles */
     /* background-color: gold; */
-    /* background-color: #191970; */
+    /* background-color: var(--tertiary-color); */
+    background-color: #7393B3;
+}
 
+@keyframes solvedAnimation {
+    from {background-color: #7393B3;}
+    to {background-color: #FFC000;}
+  }
 
+.solvedAnimation {
+    animation-name: solvedAnimation;
+    animation-duration: 4s;
+    animation-fill-mode: forwards;
 }
 
 .empty {
     display: inline-block;
     background-color: var(--secondary-color);
+}
+
+.whiteSquare {
+    background-color: white;
+    border-radius: 30%;
+}
+
+.blackSquare {
+    background-color: black;
+    border-radius: 30%;
 }
 
 .error {
