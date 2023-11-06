@@ -1,5 +1,7 @@
-import './App.css';
-import React, { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import './App.scss'
+
+import { Vertex } from './components/Vertex';
 
 function App() {
 
@@ -70,9 +72,9 @@ function App() {
   ]
 
   // Creates a matrix to keep track of which puzzle segments are active for up to 8x8 grids
-  let litUpSegmentsArray : Array<Array<Boolean>> = [];
+  let litUpSegmentsArray : Array<Array<boolean>> = [];
   for (let i = 0; i < 17; i++) {
-    let innerRow : Array<Boolean> = [];
+    let innerRow : Array<boolean> = [];
     for (let j = 0; j < 17; j++) {
       innerRow.push(false);
     }
@@ -140,7 +142,39 @@ function App() {
               </span> ;
           }
           case 'v': {
-            return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}></span>
+            // check where we are connected to (if there is an adjacent vertex)
+            let cu = false, cd = false, cl = false, cr = false
+            if (yIndex !== 0) {
+              cu = true
+            }
+            if (yIndex !== grid.length - 1) {
+              cd = true
+            }
+            if (xIndex !== 0) {
+              cl = true
+            }
+            if (xIndex !== grid.length - 1) {
+              cr = true
+            }
+            // let myLocation = playerPath.indexOf([yIndex, xIndex])
+            // let lastLocation = playerPath[myLocation - 1]
+            // let nextLocation = playerPath[myLocation + 1]
+            return (
+              // <GridItem>
+              <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}>
+                <Vertex active={litUpSegments[yIndex][xIndex]} cu={cu} cd={cd} cl={cl} cr={cr} 
+                  // incu={litUpSegments[yIndex - 1][xIndex] ? litUpSegments[yIndex - 1][xIndex] : false}
+                  // incd={litUpSegments[yIndex + 1][xIndex] ? litUpSegments[yIndex + 1][xIndex] : false}
+                  // incl={litUpSegments[yIndex][xIndex - 1] ? litUpSegments[yIndex][xIndex - 1] : false}
+                  // incr={litUpSegments[yIndex][xIndex + 1] ? litUpSegments[yIndex][xIndex + 1] : false}
+                  // outu={litUpSegments[yIndex - 1][xIndex] ? litUpSegments[yIndex - 1][xIndex] : false}
+                  // outd={litUpSegments[yIndex + 1][xIndex] ? litUpSegments[yIndex + 1][xIndex] : false}
+                  // outl={litUpSegments[yIndex][xIndex - 1] ? litUpSegments[yIndex][xIndex - 1] : false}
+                  // outr={litUpSegments[yIndex][xIndex + 1] ? litUpSegments[yIndex][xIndex + 1] : false}
+                />
+              </span>
+              // </GridItem>
+            )
           }
           case 'V': {
             return <span id={`${yIndex}.${xIndex}`} key={`${yIndex}.${xIndex}`} className={`ertex ${litUpSegments[yIndex][xIndex] ? 'activeSegment' : ''}`} style={{width: `${puzzleHeight / gridSize}vh`, height: `${puzzleHeight / gridSize}vh`}}>
@@ -708,6 +742,7 @@ function App() {
       </div> 
     </div>
   );
+
 }
 
-export default App;
+export default App
