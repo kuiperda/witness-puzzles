@@ -41,15 +41,14 @@
 //   color: #888;
 // }
 :root {
-  --primary-color: #295D8A;
-  --tertiary-color: 	#71797E;
+  --primary-color: #295d8a;
+  --tertiary-color: #71797e;
 
   --secondary-color: #353a40;
   /* --highlight-color: #40E0D0; */
 
   /* --secondary-color: #424242; */
-  --highlight-color: #10CDE1;
-
+  --highlight-color: #10cde1;
 }
 
 .app {
@@ -88,7 +87,6 @@
   border: white;
   position: relative;
   left: 5%;
-
 }
 
 .body {
@@ -102,9 +100,8 @@
 .puzzle {
   margin: auto;
   position: relative;
-  width: 80vh;
-  height: 80vh; 
-  /* Hey. Inelegant solution here hardcoded in convertGridtoDivs. Sorry! */
+  width: 84vh;
+  height: 84vh;
   background-color: var(--secondary-color);
   text-align: center;
   color: var(--highlight-color);
@@ -129,19 +126,13 @@
 }
 
 .edge {
-  position: relative;
-  margin: auto;
-  display: inline-block;
+  // position: relative;
+  // margin: auto;
+  // display: inline-block;
+  // display: none;
   background-color: var(--tertiary-color);
   // border-radius: 5%;
-  text-align: center;
-}
-
-.essential {
-  position: relative;
-  margin: auto;
-  background-color: black;
-  border-radius: 50%;
+  // text-align: center;
 }
 
 .egress {
@@ -151,12 +142,16 @@
   /* OOH use this color for mirror puzzles */
   /* background-color: gold; */
   /* background-color: var(--tertiary-color); */
-  background-color: #7393B3;
+  background-color: #7393b3;
 }
 
 @keyframes solvedAnimation {
-  from {background-color: #7393B3;}
-  to {background-color: #FFC000;}
+  from {
+    // background-color: #7393b3;
+  }
+  to {
+    background-color: #ffc000;
+  }
 }
 
 .solvedAnimation {
@@ -173,11 +168,13 @@
 .whiteSquare {
   background-color: white;
   border-radius: 30%;
+  margin: 3vh;
 }
 
 .blackSquare {
   background-color: black;
   border-radius: 30%;
+  margin: 3vh;
 }
 
 .error {
@@ -189,4 +186,3 @@
   margin: auto;
   color: white;
 }
-
